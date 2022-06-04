@@ -1,8 +1,6 @@
+# Raw game file
 import pygame
-import time
 import random
-import os
-import neat
 
 WIN_WIDTH = 500
 WIN_HEIGHT = 500
