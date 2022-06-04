@@ -8,8 +8,19 @@ WIN_HEIGHT = 500
 
 class Snake:
     def __init__(self):
-        self.x = 250
-        self.y = 250
+        self.position = [250, 250]
+        self.body = [
+            [250, 250],
+            [240, 250],
+            [230, 250],
+            [220, 250]
+        ]
+
+
+def game_over():
+    pygame.quit()
+    quit()
+    print("game over :(")
 
 
 def draw_window(win, snake):
@@ -20,12 +31,6 @@ def main():
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     fps = pygame.time.Clock()
     snake = Snake()
-    snake_position = [250, 250]
-    snake_body = [[250, 250],
-                  [240, 250],
-                  [230, 250],
-                  [220, 250]
-                  ]
     score = 0
 
     direction = 'RIGHT'
@@ -63,20 +68,20 @@ def main():
             direction = 'RIGHT'
 
         if direction == 'UP':
-            snake_position[1] -= 10
+            snake.position[1] -= 10
         if direction == 'DOWN':
-            snake_position[1] += 10
+            snake.position[1] += 10
         if direction == 'LEFT':
-            snake_position[0] -= 10
+            snake.position[0] -= 10
         if direction == 'RIGHT':
-            snake_position[0] += 10
+            snake.position[0] += 10
 
-        snake_body.insert(0, list(snake_position))
-        if snake_position[0] == fruit_location[0] and snake_position[1] == fruit_location[1]:
+        snake.body.insert(0, list(snake.position))
+        if snake.position[0] == fruit_location[0] and snake.position[1] == fruit_location[1]:
             score += 10
             fruit_spawn = False
         else:
-            snake_body.pop()
+            snake.body.pop()
 
         if not fruit_spawn:
             fruit_location = [random.randrange(1, 50) * 10,
@@ -84,13 +89,23 @@ def main():
 
         fruit_spawn = True
         win.fill((0, 0, 0))
-        for pos in snake_body:
+        for pos in snake.body:
             pygame.draw.rect(win, (0,255,0),
                              pygame.Rect(pos[0], pos[1], 10, 10))
 
         if fruit_spawn:
             pygame.draw.rect(win, (255, 0, 0),
                              pygame.Rect(fruit_location[0], fruit_location[1], 10, 10))
+
+        if snake.position[0] < 0 or snake.position[0] > WIN_WIDTH - 10:
+            game_over()
+        if snake.position[1] < 0 or snake.position[1] > WIN_HEIGHT - 10:
+            game_over()
+
+            # Touching the snake body
+        for block in snake.body[1:]:
+            if snake.position[0] == block[0] and snake.position[1] == block[1]:
+                game_over()
 
         draw_window(win, snake)
         fps.tick(10)
